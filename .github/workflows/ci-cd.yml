@@ -62,7 +62,7 @@ jobs:
       # Option : Tests supplémentaires dans le conteneur après la création de l'image (CD)
       - name: Run Docker container for testing
         run: |
-          docker run -d -p 8080:8080 --name test_container lettercraft
+          docker run -d -p 8080:5000 --name test_container lettercraft
           sleep 5  # Attendre que le conteneur soit lancé
           curl http://localhost:8080/health  # Exemple de test pour vérifier que l'application fonctionne
       # Arrêter et supprimer le conteneur après les tests
