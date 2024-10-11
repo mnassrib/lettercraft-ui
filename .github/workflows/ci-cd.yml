@@ -35,13 +35,26 @@ jobs:
         run: |
           pytest --maxfail=5 --disable-warnings
 
+      # Étape 5 : Sauvegarder les fichiers pour le job CD (artefacts)
+      - name: Upload code as artifact for CD
+        uses: actions/upload-artifact@v3
+        with:
+          name: source-code  # Nom de l'artefact
+          path: ./  # Sauvegarder tout le dépôt pour le job CD
+
   ### Job CD (Continuous Deployment) - Dépend de la réussite du job CI
   cd:
     runs-on: ubuntu-latest
     needs: ci  # Ce job s'exécute uniquement si le job 'ci' réussit
 
     steps:
-      # Étape 5 : Créer une image Docker pour validation (CD)
+      # Étape 6 : Télécharger les fichiers du job CI
+      - name: Download source code artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code  # Télécharger l'artefact sauvegardé dans le job CI
+
+      # Étape 7 : Créer une image Docker pour validation (CD)
       - name: Build Docker image
         run: |
           docker build -t lettercraft .
@@ -52,13 +65,13 @@ jobs:
           docker run -d -p 8080:8080 --name test_container lettercraft
           sleep 5  # Attendre que le conteneur soit lancé
           curl http://localhost:8080/health  # Exemple de test pour vérifier que l'application fonctionne
-        # Arrêter et supprimer le conteneur après les tests
+      # Arrêter et supprimer le conteneur après les tests
       - name: Cleanup Docker container
         run: |
           docker stop test_container
           docker rm test_container
 
-      # Étape 6 : Déployer sur Render après validation de l'image (CD)
+      # Étape 8 : Déployer sur Render après validation de l'image (CD)
       - name: Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}  \
