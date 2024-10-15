@@ -1,13 +1,14 @@
-# **LetterCraft - Générateur de Lettre de Motivation**
+# **LetterCraft - Générateur de Lettres Personnalisées**
 
-LetterCraft est une application web permettant de générer des lettres de motivation personnalisées. En remplissant un formulaire interactif, les utilisateurs peuvent obtenir une lettre de motivation en format PDF, prête à être téléchargée ou envoyée.
+LetterCraft est une application web permettant de générer des lettres personnalisées. Que ce soit pour des lettres de motivation, des réclamations, ou tout autre type de correspondance formelle, l'application offre une solution simple et rapide pour créer des lettres professionnelles. En remplissant un formulaire interactif, les utilisateurs peuvent obtenir une lettre en format PDF, prête à être téléchargée ou envoyée.
 
 ## **Fonctionnalités**
 
-- **Génération de lettre de motivation :** Créez une lettre de motivation personnalisée en remplissant un formulaire avec vos informations personnelles et professionnelles.
-- **Prévisualisation de la lettre :** Visualisez la lettre avant de la générer en PDF.
-- **Accessibilité :** Compatible avec toutes les plateformes (desktop, mobile, tablette) pour une expérience utilisateur optimale.
-- **Interface conviviale :** Interface simple et intuitive avec des champs clairement indiqués.
+- **Génération de lettres personnalisées :** Créez des lettres adaptées à vos besoins (lettres de motivation, réclamations, etc.) en remplissant un formulaire avec vos informations personnelles et celles du destinataire.
+- **Prévisualisation de la lettre :** Visualisez la lettre avant de la générer en PDF pour vous assurer qu'elle répond à vos attentes.
+- **Accessibilité multiplateforme :** Compatible avec toutes les plateformes (desktop, mobile, tablette) pour une expérience utilisateur fluide.
+- **Interface conviviale :** Interface simple et intuitive avec des champs clairement indiqués, facilitant la saisie des informations.
+- **Export PDF :** Téléchargez la lettre générée au format PDF directement depuis l'application.
 
 ## **Lien vers l'application**
 
@@ -51,3 +52,4 @@ Le workflow CI/CD inclut les étapes suivantes :
 - **Construction de l'image Docker** : Une image Docker est construite à partir du code source.
 - **Tests supplémentaires** : Un conteneur Docker est lancé pour tester l'application dans un environnement conteneurisé.
 - **Déploiement sur Render** : L'application est déployée automatiquement sur la plateforme Render après validation de l'image Docker.
+
