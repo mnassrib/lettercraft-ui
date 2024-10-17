@@ -45,6 +45,7 @@ jobs:
           docker run -d -p 5000:5000 --name test_container lettercraft
           sleep 10  # Attendre que le conteneur soit lancé
           curl http://localhost:5000/health  # Exemple de test pour vérifier que l'application fonctionne
+          
       # Arrêter et supprimer le conteneur après les tests
       - name: Cleanup Docker container
         run: |
