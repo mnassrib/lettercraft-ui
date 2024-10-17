@@ -51,7 +51,7 @@ jobs:
         run: |
           docker run -d -p 5000:5000 --name test_container lettercraft
           sleep 10  # Attendre que le conteneur soit lancé
-          curl http://localhost:5000/health  # Vérification basique
+          curl http://localhost:5000/  # Vérification basique
 
       # Nettoyer le conteneur Docker après les tests
       - name: Cleanup Docker container
