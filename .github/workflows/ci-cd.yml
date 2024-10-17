@@ -49,19 +49,13 @@ jobs:
       # Étape 7 : Exécuter des tests dans le conteneur Docker
       - name: Run Docker container for testing
         run: |
-          docker run -d -p 5000:5000 \
-            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            -e RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }} \
-            -e RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }} \
-            --name test_container lettercraft
-          sleep 10  # Augmenter le délai pour attendre que le conteneur soit prêt
-          curl http://localhost:5000/health  # Exemple de test pour vérifier que l'application fonctionne
-    
-      # Nettoyer le conteneur Docker après les tests
-      - name: Cleanup Docker container
-        run: |
-          docker stop test_container
-          docker rm test_container
+          docker run -d -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+                    -e RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }} \
+                    -e RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }} \
+                    --name lettercraft-test lettercraft
+          docker exec lettercraft-test pytest
+          docker stop lettercraft-test
+          docker rm lettercraft-test
 
       # Étape 8 : Déployer sur Render après validation de l'image (CD)
       - name: Deploy to Render
@@ -71,6 +65,6 @@ jobs:
             -H 'Accept: application/json' \
             -d ''
 
-      # Étape optionnelle : Notifier de la réussite du déploiement (CD)
+      # Étape 9 optionnelle : Notifier de la réussite du déploiement (CD)
       - name: Notify deployment success
         run: echo "Deployment to Render was successful!"
