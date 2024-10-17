@@ -27,14 +27,24 @@ L'automatisation du pipeline CI/CD inclut les éléments suivants :
 
 Ce processus permet de séparer la logique de déploiement (dans ce dépôt public) et le code source (gardé dans un dépôt privé), garantissant une automatisation fiable et sécurisée du déploiement continu.
 
+## **Configuration des secrets GitHub**
+
+Pour exécuter le pipeline CI/CD, les secrets suivants doivent être configurés dans les paramètres du dépôt GitHub :
+- `SECRET_KEY`
+- `RECAPTCHA_SITE_KEY`
+- `RECAPTCHA_SECRET_KEY`
+- `RENDER_API_KEY`
+
+Ces secrets sont utilisés pour sécuriser les clés sensibles et les informations de configuration.
+
 ## **Aperçu du pipeline CI/CD**
 
 Le pipeline CI/CD fonctionne ainsi :
 
 1. **Déclenchement** : Le pipeline CI/CD se déclenche automatiquement lorsqu'un commit est effectué dans le dépôt privé.
-2. **Tests** : Le pipeline exécute des tests pour valider le bon fonctionnement du code.
+2. **Tests** : Le pipeline exécute des tests pour valider le bon fonctionnement du code. Les tests sont exécutés à l'intérieur d'un conteneur Docker en utilisant `pytest`.
 3. **Création d'image Docker** : Si les tests réussissent, une image Docker de l'application est construite.
-4. **Tests supplémentaires dans le conteneur** : L'image Docker est validée en lançant un conteneur, et des tests supplémentaires sont exécutés pour s'assurer que l'application fonctionne correctement.
+4. **Tests supplémentaires dans le conteneur** : L'image Docker est validée en lançant un conteneur, et des tests supplémentaires sont exécutés pour s'assurer que l'application fonctionne correctement en environnement `testing`.
 5. **Déploiement** : Après validation de l'image, l'application est automatiquement déployée sur [Render](https://render.com).
 6. **Notification** : Une notification est envoyée pour indiquer le succès ou l'échec du déploiement.
 
@@ -50,6 +60,5 @@ Le workflow CI/CD inclut les étapes suivantes :
 - **Installation des dépendances** : Les dépendances nécessaires à l'application sont installées.
 - **Exécution des tests** : Les tests unitaires et d'intégration sont exécutés pour vérifier le bon fonctionnement de l'application.
 - **Construction de l'image Docker** : Une image Docker est construite à partir du code source.
-- **Tests supplémentaires** : Un conteneur Docker est lancé pour tester l'application dans un environnement conteneurisé.
+- **Tests supplémentaires** : Un conteneur Docker est lancé pour tester l'application dans un environnement conteneurisé en mode `testing`.
 - **Déploiement sur Render** : L'application est déployée automatiquement sur la plateforme Render après validation de l'image Docker.
-
