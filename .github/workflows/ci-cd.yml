@@ -52,6 +52,7 @@ jobs:
           docker run -d -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
                     -e RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }} \
                     -e RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }} \
+                    -e FLASK_ENV='testing' \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
           docker stop lettercraft-test
