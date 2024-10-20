@@ -39,13 +39,17 @@ jobs:
         with:
           postgresql_version: '13'
           postgresql_db: lettercraft_test_db
-          postgresql_user: test_user
-          postgresql_password: test_password
+          postgresql_user: ${{ secrets.POSTGRES_USER }}
+          postgresql_password: ${{ secrets.POSTGRES_PASSWORD }}
+
+      # Attendre un peu que PostgreSQL soit prêt
+      - name: Wait for PostgreSQL to be ready
+        run: sleep 10
 
       # Étape 5 : Définir la variable d'environnement DATABASE_URL (URL de la base de données PostgreSQL)
       - name: Set DATABASE_URL environment variable
         run: |
-          echo "DATABASE_URL=postgresql://test_user:test_password@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
 
       # Étape 6 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
       - name: Install dependencies and run migrations
@@ -57,7 +61,7 @@ jobs:
       # Étape 7 : Exécuter les tests unitaires sur l'application sans conteneurisation
       - name: Run tests
         run: |
-          pytest --maxfail=5 --disable-warnings  # Exécuter les tests avec pytest
+          pytest --maxfail=5 --disable-warnings
 
       # ====================== PARTIE 2: Tests en conteneur pour simuler un environnement de production ======================
 
@@ -72,7 +76,7 @@ jobs:
           docker run -d -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
                     -e RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }} \
                     -e RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }} \
-                    -e DATABASE_URL=postgresql://test_user:test_password@localhost:5432/lettercraft_test_db \
+                    -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db \
                     -e FLASK_ENV='testing' \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
