@@ -8,6 +8,12 @@ on:
 jobs:
   ci_cd:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+      RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
+      FLASK_ENV: testing
+      DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db
 
     steps:
 
@@ -39,30 +45,19 @@ jobs:
       - name: Restart PostgreSQL
         run: sudo service postgresql restart
 
-      # Étape 5 : Vérification de l'état de PostgreSQL
-      - name: Check PostgreSQL status
-        run: sudo service postgresql status
-
-      # Étape pour lister les fichiers dans le répertoire des logs PostgreSQL
-      - name: List PostgreSQL log files
-        run: sudo ls -la /var/log/postgresql/
-
-      # Si les fichiers de logs n'existent pas, vous pouvez vérifier le statut du service PostgreSQL
-      - name: Check PostgreSQL status
-        run: sudo service postgresql status
-
-      # Vérifier les logs système généraux si les logs PostgreSQL ne sont pas disponibles
-      - name: Show system logs
-        run: sudo journalctl -u postgresql
-
       # Étape 7 : Attendre activement que PostgreSQL soit prêt
       - name: Wait for PostgreSQL to be ready
         run: |
-          sudo apt-get install -y postgresql-client
-          until pg_isready -h localhost -p 5432; do
-            echo "Waiting for PostgreSQL..."
+          max_retries=6
+          retry_count=0
+          until pg_isready -h localhost -p 5432 || [ $retry_count -eq $max_retries ]; do
+            echo "Waiting for PostgreSQL... Retry count: $((++retry_count))"
             sleep 10  
           done
+          if [ $retry_count -eq $max_retries ]; then
+            echo "PostgreSQL is not ready after $max_retries attempts, exiting."
+            exit 1
+          fi
 
       # Étape 8 : Définir les variables d'environnement 
       - name: Set environment variables
@@ -83,7 +78,7 @@ jobs:
       # Étape 10 : Exécuter les tests unitaires sur l'application sans conteneurisation
       - name: Run tests
         run: |
-          FLASK_ENV=$FLASK_ENV pytest
+          pytest
 
       # ====================== PARTIE 2: Tests en conteneur pour simuler un environnement de production ======================
 
