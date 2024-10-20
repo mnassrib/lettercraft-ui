@@ -43,9 +43,17 @@ jobs:
       - name: Check PostgreSQL status
         run: sudo service postgresql status
 
-      # Étape 6 : Afficher les logs PostgreSQL (pour diagnostic)
-      - name: Show PostgreSQL logs
-        run: sudo cat /var/log/postgresql/postgresql-13-main.log
+      # Étape pour lister les fichiers dans le répertoire des logs PostgreSQL
+      - name: List PostgreSQL log files
+        run: sudo ls -la /var/log/postgresql/
+
+      # Si les fichiers de logs n'existent pas, vous pouvez vérifier le statut du service PostgreSQL
+      - name: Check PostgreSQL status
+        run: sudo service postgresql status
+
+      # Vérifier les logs système généraux si les logs PostgreSQL ne sont pas disponibles
+      - name: Show system logs
+        run: sudo journalctl -u postgresql
 
       # Étape 7 : Attendre activement que PostgreSQL soit prêt
       - name: Wait for PostgreSQL to be ready
