@@ -68,6 +68,13 @@ jobs:
           echo "FLASK_ENV=testing" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
 
+      # Étape : Test de connexion manuelle avant l'upgrade de la base de données
+      - name: Test PostgreSQL connection
+        run: |
+          psql -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }} -d lettercraft_test_db -c "SELECT 1"
+        env:
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
       # Étape 9 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
       - name: Install dependencies and run migrations
         run: |
