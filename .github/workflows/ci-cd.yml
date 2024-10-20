@@ -35,9 +35,13 @@ jobs:
           postgresql_user: ${{ secrets.POSTGRES_USER }}
           postgresql_password: ${{ secrets.POSTGRES_PASSWORD }}
 
-      # Attendre un peu que PostgreSQL soit prêt
+      # Attendre activement que PostgreSQL soit prêt
       - name: Wait for PostgreSQL to be ready
-        run: sleep 10
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
       # Étape 4 : Définir les variables d'environnement 
       - name: Set environment variables
