@@ -41,7 +41,7 @@ jobs:
           sudo apt-get install -y postgresql-client
           until pg_isready -h localhost -p 5432; do
             echo "Waiting for PostgreSQL..."
-            sleep 5  
+            sleep 10  
           done
 
       # Étape 4 : Définir les variables d'environnement 
