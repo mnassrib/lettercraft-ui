@@ -13,7 +13,7 @@ jobs:
       RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
       RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
       FLASK_ENV: testing
-      DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db
+      DATABASE_URL: postgresql://test:1525@localhost:5432/lettercraft_test_db
 
     steps:
 
@@ -38,8 +38,8 @@ jobs:
         with:
           postgresql_version: '13'
           postgresql_db: lettercraft_test_db
-          postgresql_user: ${{ secrets.POSTGRES_USER }}
-          postgresql_password: ${{ secrets.POSTGRES_PASSWORD }}
+          postgresql_user: test
+          postgresql_password: 1525
 
       # Étape 4 : Redémarrer PostgreSQL (si nécessaire)
       - name: Restart PostgreSQL
@@ -66,14 +66,14 @@ jobs:
           echo "RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}" >> $GITHUB_ENV
           echo "RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}" >> $GITHUB_ENV
           echo "FLASK_ENV=testing" >> $GITHUB_ENV
-          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://test:1525@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
 
       # Étape : Test de connexion manuelle avant l'upgrade de la base de données
       - name: Test PostgreSQL connection
         run: |
-          psql -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }} -d lettercraft_test_db -c "SELECT 1"
+          psql -h localhost -p 5432 -U test -d lettercraft_test_db -c "SELECT 1"
         env:
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PGPASSWORD: 1525
 
       # Étape 9 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
       - name: Install dependencies and run migrations
@@ -100,7 +100,7 @@ jobs:
           docker run -d -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
-                    -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db \
+                    -e DATABASE_URL=postgresql://test:1525@localhost:5432/lettercraft_test_db \
                     -e FLASK_ENV=$FLASK_ENV \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
