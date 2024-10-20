@@ -35,7 +35,19 @@ jobs:
           postgresql_user: ${{ secrets.POSTGRES_USER }}
           postgresql_password: ${{ secrets.POSTGRES_PASSWORD }}
 
-      # Attendre activement que PostgreSQL soit prêt
+      # Étape 4 : Redémarrer PostgreSQL (si nécessaire)
+      - name: Restart PostgreSQL
+        run: sudo service postgresql restart
+
+      # Étape 5 : Vérification de l'état de PostgreSQL
+      - name: Check PostgreSQL status
+        run: sudo service postgresql status
+
+      # Étape 6 : Afficher les logs PostgreSQL (pour diagnostic)
+      - name: Show PostgreSQL logs
+        run: sudo cat /var/log/postgresql/postgresql-13-main.log
+
+      # Étape 7 : Attendre activement que PostgreSQL soit prêt
       - name: Wait for PostgreSQL to be ready
         run: |
           sudo apt-get install -y postgresql-client
@@ -44,7 +56,7 @@ jobs:
             sleep 10  
           done
 
-      # Étape 4 : Définir les variables d'environnement 
+      # Étape 8 : Définir les variables d'environnement 
       - name: Set environment variables
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
@@ -53,26 +65,26 @@ jobs:
           echo "FLASK_ENV=testing" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
 
-      # Étape 5 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
+      # Étape 9 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
       - name: Install dependencies and run migrations
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           flask db upgrade
 
-      # Étape 6 : Exécuter les tests unitaires sur l'application sans conteneurisation
+      # Étape 10 : Exécuter les tests unitaires sur l'application sans conteneurisation
       - name: Run tests
         run: |
           FLASK_ENV=$FLASK_ENV pytest
 
       # ====================== PARTIE 2: Tests en conteneur pour simuler un environnement de production ======================
 
-      # Étape 7 : Construire l'image Docker pour l'application en utilisant le Dockerfile
+      # Étape 11 : Construire l'image Docker pour l'application en utilisant le Dockerfile
       - name: Build Docker image
         run: |
           docker build -t lettercraft .
 
-      # Étape 8 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
+      # Étape 12 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
       - name: Run Docker container for testing
         run: |
           docker run -d -e SECRET_KEY=$SECRET_KEY \
@@ -87,13 +99,12 @@ jobs:
 
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
-      # Étape 9 : Appliquer les migrations sur la base de données de Render (avant déploiement)
-      - name: Migrate Database on Render (without Docker)
+      # Étape 13 : Appliquer les migrations sur la base de données de Render (avant déploiement)
+      - name: Migrate Database on Render
         run: |
-          export DATABASE_URL=${{ secrets.DATABASE_URL }}
-          flask db upgrade
+          docker run --rm -e DATABASE_URL=${{ secrets.DATABASE_URL }} lettercraft flask db upgrade
 
-      # Étape 10 : Déployer l'application sur Render après validation des migrations
+      # Étape 14 : Déployer l'application sur Render après validation des migrations
       - name: Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }} \
@@ -101,6 +112,6 @@ jobs:
             -H 'Accept: application/json' \
             -d ''
 
-      # Étape 11 (optionnelle) : Notifier de la réussite du déploiement
+      # Étape 15 (optionnelle) : Notifier de la réussite du déploiement
       - name: Notify deployment success
         run: echo "Deployment to Render was successful!"
