@@ -38,6 +38,7 @@ jobs:
       # Attendre activement que PostgreSQL soit prêt
       - name: Wait for PostgreSQL to be ready
         run: |
+          sudo apt-get install -y postgresql-client
           until pg_isready -h localhost -p 5432; do
             echo "Waiting for PostgreSQL..."
             sleep 2
