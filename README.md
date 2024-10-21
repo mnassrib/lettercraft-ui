@@ -17,48 +17,69 @@ L'application est accessible en ligne à l'adresse suivante :
 
 ## **Contexte et objectif**
 
-Ce dépôt public a pour objectif de **configurer un pipeline CI/CD** en utilisant **GitHub Actions**, tout en gardant le code source de l'application dans un dépôt privé. L'idée principale est de **déclencher automatiquement le workflow CI/CD dans ce dépôt public lorsque des commits sont effectués dans le dépôt privé**.
+Ce dépôt public a pour objectif de **configurer un pipeline CI/CD** en utilisant **GitHub Actions**, tout en gardant le code source de l'application dans un dépôt privé. Le pipeline CI/CD est déclenché automatiquement par un événement personnalisé lorsqu'une action spécifique est effectuée dans le dépôt privé, comme un commit.
 
-L'automatisation du pipeline CI/CD inclut les éléments suivants :
-- **Tests et validation** du code source de l'application.
+### **Automatisation du pipeline CI/CD**
+
+Le pipeline CI/CD comprend les tâches suivantes :
+- **Tests et validation** du code source sans conteneurisation.
 - **Création d'une image Docker** de l'application.
-- **Lancement de tests dans un environnement conteneurisé** pour valider le bon fonctionnement de l'application.
-- **Déploiement automatique** de l'application sur [Render](https://render.com).
+- **Lancement de tests dans un conteneur Docker** pour valider le bon fonctionnement de l'application dans un environnement simulant la production.
+- **Application des migrations de base de données et déploiement automatique** de l'application sur [Render](https://render.com) après validation.
 
-Ce processus permet de séparer la logique de déploiement (dans ce dépôt public) et le code source (gardé dans un dépôt privé), garantissant une automatisation fiable et sécurisée du déploiement continu.
+### **Configuration des secrets GitHub**
 
-## **Configuration des secrets GitHub**
-
-Pour exécuter le pipeline CI/CD, les secrets suivants doivent être configurés dans les paramètres du dépôt GitHub :
+Pour exécuter correctement le pipeline CI/CD, les secrets suivants doivent être configurés dans les paramètres du dépôt GitHub :
 - `SECRET_KEY`
 - `RECAPTCHA_SITE_KEY`
 - `RECAPTCHA_SECRET_KEY`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_DB_TEST`
+- `DATABASE_URL`
+- `PERSONAL_ACCESS_TOKEN` (pour cloner le dépôt privé)
 - `RENDER_API_KEY`
+- `RENDER_DEPLOY_HOOK`
 
-Ces secrets sont utilisés pour sécuriser les clés sensibles et les informations de configuration.
+Ces secrets sont utilisés pour protéger les informations sensibles liées à l'application et aux environnements de test et de production.
 
 ## **Aperçu du pipeline CI/CD**
 
-Le pipeline CI/CD fonctionne ainsi :
+Le pipeline CI/CD se compose de trois grandes phases :
 
-1. **Déclenchement** : Le pipeline CI/CD se déclenche automatiquement lorsqu'un commit est effectué dans le dépôt privé.
-2. **Tests** : Le pipeline exécute des tests pour valider le bon fonctionnement du code. Les tests sont exécutés à l'intérieur d'un conteneur Docker en utilisant `pytest`.
-3. **Création d'image Docker** : Si les tests réussissent, une image Docker de l'application est construite.
-4. **Tests supplémentaires dans le conteneur** : L'image Docker est validée en lançant un conteneur, et des tests supplémentaires sont exécutés pour s'assurer que l'application fonctionne correctement en environnement `testing`.
-5. **Déploiement** : Après validation de l'image, l'application est automatiquement déployée sur [Render](https://render.com).
-6. **Notification** : Une notification est envoyée pour indiquer le succès ou l'échec du déploiement.
+### 1. **Tests sans conteneurisation**
+- **Installation de PostgreSQL** sur la machine virtuelle d'exécution.
+- **Création de l'utilisateur et de la base de données** PostgreSQL nécessaires pour les tests.
+- **Clonage du dépôt privé** contenant le code source de l'application.
+- **Installation des dépendances Python** et **exécution des migrations** pour préparer la base de données.
+- **Exécution des tests unitaires** via `pytest` pour valider le bon fonctionnement du code dans un environnement local sans Docker.
 
-### **Déclenchement du workflow**
+### 2. **Tests avec conteneurisation (Docker)**
+- **Construction d'une image Docker** de l'application à partir du `Dockerfile`.
+- **Lancement d'un conteneur Docker** avec les configurations d'environnement et exécution des tests unitaires dans un environnement conteneurisé.
+  
+  Cela permet de s'assurer que l'application fonctionne correctement dans un environnement isolé et proche de celui de production.
 
-Le workflow GitHub Actions est déclenché par des événements provenant du dépôt privé via un webhook, ce qui permet de démarrer le pipeline CI/CD dans ce dépôt public sans exposer le code source privé.
+### 3. **Déploiement sur Render**
+- **Application des migrations** sur la base de données de production hébergée par Render pour garantir la cohérence des données.
+- **Déploiement de l'application** sur la plateforme Render après validation des tests.
+- **Notification de succès** après déploiement (optionnel).
 
-### **Détails du workflow CI/CD**
+## **Déclenchement du workflow**
 
-Le workflow CI/CD inclut les étapes suivantes :
+Le workflow GitHub Actions est déclenché par un événement `repository_dispatch` provenant du dépôt privé, via un webhook configuré. Cet événement de type `deploy` permet de lancer automatiquement le pipeline CI/CD dans ce dépôt public sans avoir à exposer le code source privé.
 
-- **Clone du dépôt privé** : Le dépôt privé contenant le code source est cloné.
-- **Installation des dépendances** : Les dépendances nécessaires à l'application sont installées.
-- **Exécution des tests** : Les tests unitaires et d'intégration sont exécutés pour vérifier le bon fonctionnement de l'application.
-- **Construction de l'image Docker** : Une image Docker est construite à partir du code source.
-- **Tests supplémentaires** : Un conteneur Docker est lancé pour tester l'application dans un environnement conteneurisé en mode `testing`.
-- **Déploiement sur Render** : L'application est déployée automatiquement sur la plateforme Render après validation de l'image Docker.
+## **Détails techniques du workflow CI/CD**
+
+Le pipeline inclut les étapes suivantes :
+
+1. **Installation de PostgreSQL** et préparation de l'environnement de base de données.
+2. **Clonage du dépôt privé** contenant le code source de l'application avec un jeton d'accès sécurisé.
+3. **Installation des dépendances** du projet via `pip` et exécution des migrations pour synchroniser la base de données.
+4. **Exécution des tests unitaires** pour s'assurer que le code fonctionne comme prévu sans conteneurisation.
+5. **Construction de l'image Docker** à partir du `Dockerfile` présent dans le dépôt.
+6. **Lancement d'un conteneur Docker** pour tester l'application dans un environnement `testing`, en simulant un environnement de production.
+7. **Application des migrations** sur la base de données de production hébergée sur Render.
+8. **Déploiement de l'application** sur la plateforme Render après validation des tests et des migrations.
+
+Ce pipeline CI/CD garantit que l'application LetterCraft est correctement testée et déployée en production, en utilisant une approche automatisée et sécurisée.
