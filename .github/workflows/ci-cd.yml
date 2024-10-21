@@ -70,7 +70,9 @@ jobs:
 
       - name: Set PostgreSQL password for postgres
         run: |
+          cd /tmp
           sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+      
 
       # Étape 5 : Vérifier si l'utilisateur PostgreSQL existe
       - name: Check if PostgreSQL user exists
