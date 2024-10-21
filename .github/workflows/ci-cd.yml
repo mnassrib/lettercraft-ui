@@ -68,6 +68,13 @@ jobs:
           echo "FLASK_ENV=testing" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/lettercraft_test_db" >> $GITHUB_ENV
 
+      # Étape 5 : Vérifier si l'utilisateur PostgreSQL existe
+      - name: Check if PostgreSQL user exists
+        run: |
+          psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '${{ secrets.POSTGRES_USER }}';"
+        env:
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
       # Étape : Test de connexion manuelle avant l'upgrade de la base de données
       - name: Test PostgreSQL connection
         run: |
