@@ -38,7 +38,7 @@ jobs:
         with:
           postgresql_version: '13'
           postgresql_db: lettercraft_test_db
-          postgresql_user: ${{ secrets.POSTGRES_USER }}
+          postgresql_user: postgres
           postgresql_password: ${{ secrets.POSTGRES_PASSWORD }}
 
       # Étape 4 : Redémarrer PostgreSQL (si nécessaire)
