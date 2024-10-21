@@ -77,7 +77,7 @@ jobs:
       # Étape 5 : Vérifier si l'utilisateur PostgreSQL existe
       - name: Check if PostgreSQL user exists
         run: |
-          sudo -u postgres psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '${{ secrets.POSTGRES_USER }}';"
+          psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '${{ secrets.POSTGRES_USER }}';"
         env:
           PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
