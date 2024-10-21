@@ -71,8 +71,11 @@ jobs:
       - name: Apply database migrations in Docker container
         run: |
           docker run --rm --network="host" \
+                    -e SECRET_KEY=$SECRET_KEY \
+                    -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
+                    -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
-                    -e FLASK_ENV=$FLASK_ENV \
+                    -e FLASK_ENV=production \
                     lettercraft flask db upgrade
 
       # Étape 10 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
