@@ -85,7 +85,7 @@ jobs:
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
-                    -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
+                    -e TEST_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
                     -e FLASK_ENV=$FLASK_ENV \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
@@ -101,7 +101,7 @@ jobs:
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
-                    -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+                    -e PROD_DATABASE_URL=${{ secrets.DATABASE_URL }} \
                     lettercraft flask db upgrade
 
       # Étape 12 : Déployer l'application sur Render après validation des migrations
