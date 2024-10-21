@@ -93,12 +93,7 @@ jobs:
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     lettercraft flask db upgrade
 
-      # Étape 11 : Capturer les logs de migration
-      - name: Capture migration logs
-        run: |
-          docker logs lettercraft
-
-      # Étape 12 : Déployer l'application sur Render après validation des migrations
+      # Étape 11 : Déployer l'application sur Render après validation des migrations
       - name: Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }} \
@@ -106,6 +101,6 @@ jobs:
             -H 'Accept: application/json' \
             -d ''
 
-      # Étape 13 (optionnelle) : Notifier de la réussite du déploiement
+      # Étape 12 (optionnelle) : Notifier de la réussite du déploiement
       - name: Notify deployment success
         run: echo "Deployment to Render was successful!"
