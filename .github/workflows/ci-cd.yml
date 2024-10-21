@@ -67,7 +67,15 @@ jobs:
         run: |
           docker build -t lettercraft .
 
-      # Étape 9 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
+      # Étape 9 : Appliquer les migrations dans le conteneur Docker
+      - name: Apply database migrations in Docker container
+        run: |
+          docker run --rm --network="host" \
+                    -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
+                    -e FLASK_ENV=$FLASK_ENV \
+                    lettercraft flask db upgrade
+
+      # Étape 10 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
       - name: Run Docker container for testing
         run: |
           docker run -d --network="host" \
@@ -83,7 +91,7 @@ jobs:
 
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
-      # Étape 10 : Appliquer les migrations sur la base de données de Render (avant déploiement)
+      # Étape 11 : Appliquer les migrations sur la base de données de Render (avant déploiement)
       - name: Migrate Database on Render
         run: |
           docker run --rm \
@@ -93,7 +101,7 @@ jobs:
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     lettercraft flask db upgrade
 
-      # Étape 11 : Déployer l'application sur Render après validation des migrations
+      # Étape 12 : Déployer l'application sur Render après validation des migrations
       - name: Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }} \
@@ -101,6 +109,6 @@ jobs:
             -H 'Accept: application/json' \
             -d ''
 
-      # Étape 12 (optionnelle) : Notifier de la réussite du déploiement
+      # Étape 13 (optionnelle) : Notifier de la réussite du déploiement
       - name: Notify deployment success
         run: echo "Deployment to Render was successful!"
