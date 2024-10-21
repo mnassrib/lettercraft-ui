@@ -14,33 +14,33 @@ jobs:
       # ====================== PARTIE 1: Tests sur GitHub sans conteneurisation ======================
 
       # Étape 1 : Installer PostgreSQL
-      - name: Install PostgreSQL
+      - name: Part 1/step 1 - Install PostgreSQL
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql postgresql-contrib
           sudo service postgresql start
 
       # Étape 2 : Créer l'utilisateur et la base de données PostgreSQL
-      - name: Create PostgreSQL user and database
+      - name: Part 1/step 2 - Create PostgreSQL user and database
         run: |
           sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
           sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB_TEST }} OWNER ${{ secrets.POSTGRES_USER }};"
 
       # Étape 3 : Cloner le dépôt privé contenant le code source de l'application
-      - name: Checkout code from the private repository
+      - name: Part 1/step 3 - Checkout code from the private repository
         uses: actions/checkout@v3
         with:
           repository: mnassrib/lettercraft-backend
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Étape 4 : Configurer l'environnement Python
-      - name: Set up Python 3.10
+      - name: Part 1/step 4 - Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       # Étape 5 : Définir les variables d'environnement 
-      - name: Set environment variables
+      - name: Part 1/step 5 - Set environment variables
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}" >> $GITHUB_ENV
@@ -49,26 +49,26 @@ jobs:
           echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }}" >> $GITHUB_ENV
 
       # Étape 6 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
-      - name: Install dependencies and run migrations
+      - name: Part 1/step 6 - Install dependencies and run migrations
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           flask db upgrade
 
       # Étape 7 : Exécuter les tests unitaires sur l'application sans conteneurisation
-      - name: Run tests
+      - name: Part 1/step 7 - Run tests
         run: |
           FLASK_ENV=$FLASK_ENV pytest
 
       # ====================== PARTIE 2: Tests en conteneur pour simuler un environnement de production ======================
 
       # Étape 8 : Construire l'image Docker pour l'application en utilisant le Dockerfile
-      - name: Build Docker image
+      - name: Part 2/step 8 - Build Docker image
         run: |
           docker build -t lettercraft .
 
       # Étape 9 : Appliquer les migrations dans le conteneur Docker
-      - name: Apply database migrations in Docker container
+      - name: Part 2/step 9 - Apply database migrations in Docker container
         run: |
           docker run --rm --network="host" \
                     -e SECRET_KEY=$SECRET_KEY \
@@ -79,14 +79,14 @@ jobs:
                     lettercraft flask db upgrade
 
       # Étape 10 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
-      - name: Run Docker container for testing
+      - name: Part 2/step 10 - Run Docker container for testing
         run: |
           docker run -d --network="host" \
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
-                    -e FLASK_ENV=production \
+                    -e FLASK_ENV=$FLASK_ENV \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
           docker stop lettercraft-test
@@ -95,17 +95,17 @@ jobs:
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
       # Étape 11 : Appliquer les migrations sur la base de données de Render (avant déploiement)
-      - name: Migrate Database on Render
+      - name: Part 3/step 11 - Migrate Database on Render
         run: |
           docker run --rm \
-                    -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
+                    -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
                     lettercraft flask db upgrade
 
       # Étape 12 : Déployer l'application sur Render après validation des migrations
-      - name: Deploy to Render
+      - name: Part 3/step 12 - Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }} \
             -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}' \
@@ -113,5 +113,5 @@ jobs:
             -d ''
 
       # Étape 13 (optionnelle) : Notifier de la réussite du déploiement
-      - name: Notify deployment success
+      - name: Part 3/step 13 - Notify deployment success
         run: echo "Deployment to Render was successful!"
