@@ -70,7 +70,8 @@ jobs:
       # Étape 9 : Lancer un conteneur Docker et tester l'application dans un environnement en mode "testing"
       - name: Run Docker container for testing
         run: |
-          docker run -d -e SECRET_KEY=$SECRET_KEY \
+          docker run -d --network="host" \
+                    -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
