@@ -36,7 +36,7 @@ Pour exécuter correctement le pipeline CI/CD, les secrets suivants doivent êtr
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 - `POSTGRES_DB_TEST`
-- `DATABASE_URL`
+- `PROD_DATABASE_URL`
 - `PERSONAL_ACCESS_TOKEN` (pour cloner le dépôt privé)
 - `RENDER_API_KEY`
 - `RENDER_DEPLOY_HOOK`
