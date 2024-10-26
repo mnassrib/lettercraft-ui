@@ -104,6 +104,8 @@ jobs:
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
+                    -e DEV_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
+                    -e TEST_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }} \
                     -e PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }} \
                     -e FLASK_CONFIG=production \
                     lettercraft flask db upgrade
