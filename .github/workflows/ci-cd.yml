@@ -105,6 +105,7 @@ jobs:
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }} \
+                    -e FLASK_CONFIG=production \
                     lettercraft flask db upgrade
 
       # Étape 12 : Déployer l'application sur Render après validation des migrations
