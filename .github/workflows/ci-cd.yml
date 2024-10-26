@@ -46,6 +46,7 @@ jobs:
           echo "RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}" >> $GITHUB_ENV
           echo "RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}" >> $GITHUB_ENV
           echo "FLASK_CONFIG=testing" >> $GITHUB_ENV
+          echo "DEV_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }}" >> $GITHUB_ENV
           echo "TEST_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }}" >> $GITHUB_ENV
 
       # Étape 6 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
