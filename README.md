@@ -36,7 +36,7 @@ Pour exécuter correctement le pipeline CI/CD, les secrets suivants doivent êtr
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 - `POSTGRES_DB_TEST`
-- `PROD_DATABASE_URL`
+- `PROD_DATABASE_URL` (URL de la base de données sur Supabase pour la production)
 - `PERSONAL_ACCESS_TOKEN` (pour cloner le dépôt privé)
 - `RENDER_API_KEY`
 - `RENDER_DEPLOY_HOOK`
@@ -60,8 +60,8 @@ Le pipeline CI/CD se compose de trois grandes phases :
   
   Cela permet de s'assurer que l'application fonctionne correctement dans un environnement isolé et proche de celui de production.
 
-### 3. **Déploiement sur Render**
-- **Application des migrations** sur la base de données de production hébergée par Render pour garantir la cohérence des données.
+### 3. **Déploiement sur Render et migration de la base de données sur Supabase**
+- **Application des migrations** sur la base de données de production hébergée sur Supabase pour garantir la cohérence des données avant le déploiement.
 - **Déploiement de l'application** sur la plateforme Render après validation des tests.
 - **Notification de succès** après déploiement (optionnel).
 
@@ -79,7 +79,7 @@ Le pipeline inclut les étapes suivantes :
 4. **Exécution des tests unitaires** pour s'assurer que le code fonctionne comme prévu sans conteneurisation.
 5. **Construction de l'image Docker** à partir du `Dockerfile` présent dans le dépôt.
 6. **Lancement d'un conteneur Docker** pour tester l'application dans un environnement `testing`, en simulant un environnement de production.
-7. **Application des migrations** sur la base de données de production hébergée sur Render.
+7. **Application des migrations** sur la base de données de production hébergée sur Supabase, assurant ainsi la conformité des schémas de données.
 8. **Déploiement de l'application** sur la plateforme Render après validation des tests et des migrations.
 
 Ce pipeline CI/CD garantit que l'application LetterCraft est correctement testée et déployée en production, en utilisant une approche automatisée et sécurisée.
