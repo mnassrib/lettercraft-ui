@@ -98,16 +98,13 @@ jobs:
         run: |
           echo "PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}" >> $GITHUB_ENV
 
-      - name: Debug - Check PROD_DATABASE_URL prefix
-        run: |
-            echo "PROD_DATABASE_URL (partial) is: ${PROD_DATABASE_URL:0:10}..."
-        
-        
-
       # Étape 11 : Appliquer les migrations sur la base de données de Supabase (avant déploiement)
       - name: Part 3/step 11 - Migrate Database on Supabase
         run: |
+          echo "Starting migration on Supabase..."
+          echo "PROD_DATABASE_URL is set to: ${PROD_DATABASE_URL:0:10}..."
           docker run --rm \
+                    -e FLASK_CONFIG=production \
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
