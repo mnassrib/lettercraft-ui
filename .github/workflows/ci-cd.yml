@@ -54,8 +54,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           echo "Running database migration in testing mode"
-          echo "FLASK_CONFIG is set to: $FLASK_CONFIG"  # Vérifiez si FLASK_CONFIG est bien testing
-          flask db upgrade
+          echo "FLASK_CONFIG is set to: $FLASK_CONFIG"
+          FLASK_APP="app:create_app('testing')" flask db upgrade
 
       # Étape 7 : Exécuter les tests unitaires sur l'application sans conteneurisation
       - name: Part 1/step 7 - Run tests
