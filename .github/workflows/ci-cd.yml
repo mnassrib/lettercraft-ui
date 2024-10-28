@@ -94,14 +94,14 @@ jobs:
 
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
-      # Étape 11 : Appliquer les migrations sur la base de données de Render (avant déploiement)
+      # Étape 11 : Appliquer les migrations sur la base de données de Supabase (avant déploiement)
       - name: Part 3/step 11 - Migrate Database on Render
         run: |
           docker run --rm \
                     -e SECRET_KEY=$SECRET_KEY \
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
-                    -e PROD_DATABASE_URL=${{ secrets.RENDER_PROD_DATABASE_URL }} \
+                    -e PROD_DATABASE_URL=${{ secrets.SUPABASE_PROD_DATABASE_URL }} \
                     lettercraft flask db upgrade
 
       # Étape 12 : Déployer l'application sur Render après validation des migrations
