@@ -94,6 +94,10 @@ jobs:
 
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
+      - name: Debug - Check PROD_DATABASE_URL prefix
+        run: echo "PROD_DATABASE_URL (partial) is: ${PROD_DATABASE_URL:0:10}..."
+    
+
       # Étape 11 : Appliquer les migrations sur la base de données de Supabase (avant déploiement)
       - name: Part 3/step 11 - Migrate Database on Supabase
         run: |
