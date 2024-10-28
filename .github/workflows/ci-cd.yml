@@ -95,7 +95,7 @@ jobs:
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
       # Étape 11 : Appliquer les migrations sur la base de données de Supabase (avant déploiement)
-      - name: Part 3/step 11 - Migrate Database on Render
+      - name: Part 3/step 11 - Migrate Database on Supabase
         run: |
           docker run --rm \
                     -e SECRET_KEY=$SECRET_KEY \
