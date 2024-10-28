@@ -94,7 +94,10 @@ jobs:
 
       # ====================== PARTIE 3: Appliquer les migrations en production et déployer sur Render ======================
 
-      
+      - name: Debug - Set PROD_DATABASE_URL
+        run: |
+          echo "PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}" >> $GITHUB_ENV
+
       - name: Debug - Check PROD_DATABASE_URL prefix
         run: |
             echo "PROD_DATABASE_URL (partial) is: ${PROD_DATABASE_URL:0:10}..."
