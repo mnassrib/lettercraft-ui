@@ -47,6 +47,9 @@ jobs:
           echo "RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}" >> $GITHUB_ENV
           echo "TEST_DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB_TEST }}" >> $GITHUB_ENV
           echo "PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}" >> $GITHUB_ENV
+          echo "MAX_LETTERS=${{ secrets.MAX_LETTERS }}" >> $GITHUB_ENV
+          echo "SENDINBLUE_API_KEY=${{ secrets.SENDINBLUE_API_KEY }}" >> $GITHUB_ENV
+          echo "MAIL_DEFAULT_SENDER=${{ secrets.MAIL_DEFAULT_SENDER }}" >> $GITHUB_ENV
 
       # Étape 6 : Installer les dépendances du projet et appliquer les migrations des données pour synchroniser le schéma
       - name: Part 1/step 6 - Install dependencies and run migrations
@@ -75,6 +78,9 @@ jobs:
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e TEST_DATABASE_URL=$TEST_DATABASE_URL \
+                    -e MAX_LETTERS=$MAX_LETTERS \
+                    -e SENDINBLUE_API_KEY=$SENDINBLUE_API_KEY \
+                    -e MAIL_DEFAULT_SENDER=$MAIL_DEFAULT_SENDER \
                     -e FLASK_CONFIG=testing \
                   lettercraft flask db upgrade
 
@@ -86,6 +92,9 @@ jobs:
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e TEST_DATABASE_URL=$TEST_DATABASE_URL \
+                    -e MAX_LETTERS=$MAX_LETTERS \
+                    -e SENDINBLUE_API_KEY=$SENDINBLUE_API_KEY \
+                    -e MAIL_DEFAULT_SENDER=$MAIL_DEFAULT_SENDER \
                     -e FLASK_CONFIG=testing \
                     --name lettercraft-test lettercraft
           docker exec lettercraft-test pytest
@@ -102,6 +111,9 @@ jobs:
                     -e RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY \
                     -e RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
                     -e PROD_DATABASE_URL="$PROD_DATABASE_URL" \
+                    -e MAX_LETTERS=$MAX_LETTERS \
+                    -e SENDINBLUE_API_KEY=$SENDINBLUE_API_KEY \
+                    -e MAIL_DEFAULT_SENDER=$MAIL_DEFAULT_SENDER \
                     -e FLASK_CONFIG=production \
                   lettercraft flask db upgrade
 
