@@ -13,7 +13,7 @@ LetterCraft est une application web permettant de générer des lettres personna
 ## **Lien vers l'application**
 
 L'application est accessible en ligne à l'adresse suivante :  
-[https://lettercraft.onrender.com/home](https://lettercraft.onrender.com/home)
+[https://lettercraft.onrender.com/](https://lettercraft.onrender.com/)
 
 ## **Contexte et objectif**
 
