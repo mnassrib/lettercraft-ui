@@ -21,6 +21,7 @@ LetterCraft est une application web permettant de générer des lettres personna
 Brevo gère les emails transactionnels de l’application, tels que :
   - Confirmation d'inscription.
   - Réinitialisation de mot de passe.
+  - Envoi de messages à partir de la page Contact.
 
 ## **Fonctionnalités**
 
