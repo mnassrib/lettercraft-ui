@@ -18,11 +18,9 @@ LetterCraft est une application web permettant de générer des lettres personna
 - En cas de problème (site inaccessible, réponse lente), des alertes sont envoyées aux administrateurs pour permettre une intervention rapide et limiter l'impact sur les utilisateurs.
 
 ### **4. Brevo (anciennement Sendinblue)**
-- Brevo gère les emails transactionnels de l’application, tels que :
+Brevo gère les emails transactionnels de l’application, tels que :
   - Confirmation d'inscription.
   - Réinitialisation de mot de passe.
-  - Notifications et rappels.
-- L'intégration de Brevo permet également d'envoyer des campagnes d'emailing ciblées (par exemple, des annonces ou des promotions).
 
 ## **Fonctionnalités**
 
