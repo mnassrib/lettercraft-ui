@@ -2,6 +2,28 @@
 
 LetterCraft est une application web permettant de générer des lettres personnalisées. Que ce soit pour des lettres de motivation, des réclamations, ou tout autre type de correspondance formelle, l'application offre une solution simple et rapide pour créer des lettres professionnelles. En remplissant un formulaire interactif, les utilisateurs peuvent obtenir une lettre en format PDF, prête à être téléchargée ou envoyée.
 
+## **Services Utilisés**
+
+### **1. Render**
+- L'application est hébergée sur [Render](https://render.com), une plateforme cloud moderne offrant un déploiement rapide, sécurisé et évolutif.
+- Render gère le déploiement de l'application et assure une mise à l'échelle automatique pour répondre aux besoins des utilisateurs.
+
+### **2. Supabase**
+- La gestion des données utilisateurs (profils, préférences, historique des lettres) repose sur [Supabase](https://supabase.com), une plateforme backend-as-a-service puissante et intuitive.
+- Supabase offre également des fonctionnalités d’authentification sécurisée pour gérer les connexions et inscriptions des utilisateurs.
+- Les migrations de base de données sont automatisées pour garantir une cohérence entre les environnements de développement, de test et de production.
+
+### **3. UptimeRobot**
+- [UptimeRobot](https://uptimerobot.com) est utilisé pour surveiller en temps réel la disponibilité de l'application.
+- En cas de problème (site inaccessible, réponse lente), des alertes sont envoyées aux administrateurs pour permettre une intervention rapide et limiter l'impact sur les utilisateurs.
+
+### **4. Brevo (anciennement Sendinblue)**
+- Brevo gère les emails transactionnels de l’application, tels que :
+  - Confirmation d'inscription.
+  - Réinitialisation de mot de passe.
+  - Notifications et rappels.
+- L'intégration de Brevo permet également d'envoyer des campagnes d'emailing ciblées (par exemple, des annonces ou des promotions).
+
 ## **Fonctionnalités**
 
 - **Génération de lettres personnalisées :** Créez des lettres adaptées à vos besoins (lettres de motivation, réclamations, etc.) en remplissant un formulaire avec vos informations personnelles et celles du destinataire.
@@ -9,6 +31,7 @@ LetterCraft est une application web permettant de générer des lettres personna
 - **Accessibilité multiplateforme :** Compatible avec toutes les plateformes (desktop, mobile, tablette) pour une expérience utilisateur fluide.
 - **Interface conviviale :** Interface simple et intuitive avec des champs clairement indiqués, facilitant la saisie des informations.
 - **Export PDF :** Téléchargez la lettre générée au format PDF directement depuis l'application.
+- **Notifications par email :** Recevez des notifications transactionnelles (confirmation d'inscription, réinitialisation de mot de passe) grâce à l'intégration avec Brevo.
 
 ## **Lien vers l'application**
 
