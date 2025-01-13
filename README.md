@@ -2,7 +2,7 @@
 
 LetterCraft est une application web permettant de générer des lettres personnalisées. Que ce soit pour des lettres de motivation, des réclamations, ou tout autre type de correspondance formelle, l'application offre une solution simple et rapide pour créer des lettres professionnelles. En remplissant un formulaire interactif, les utilisateurs peuvent obtenir une lettre en format PDF, prête à être téléchargée ou envoyée.
 
-## **Services Utilisés**
+## **Services utilisés**
 
 ### **1. Render**
 - L'application est hébergée sur [Render](https://render.com), une plateforme cloud moderne offrant un déploiement rapide, sécurisé et évolutif.
